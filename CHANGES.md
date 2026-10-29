@@ -26,6 +26,9 @@ This repository was rebuilt beside the original course project rather than rewri
 
 ## Post-publication reliability hardening
 
+- Normalized multiple-statement rejection across supported Python versions by
+  handling the `sqlite3.Warning` raised by Python 3.10 as a validation error.
+
 Regression tests were added before implementation changes. The pre-fix run produced **17 failures, 65 passes, and 1 skipped live integration test**. Confirmed failures covered missing final content validation, forged reviewer output, SQL literal/comment false positives, sample stdout protocol corruption, missing diagnostics, task handoff, and working-directory-sensitive wrappers. Live model compliance with the handoff remains an explicitly unverified risk rather than a test result.
 
 After extending the working-directory regression from two wrappers to all four, Code Author exposed one additional confirmed defect: its subprocess used module lookup relative to the caller's environment. The worker now launches through its absolute package file path.

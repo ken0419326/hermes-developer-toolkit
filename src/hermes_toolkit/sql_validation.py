@@ -75,7 +75,7 @@ def validate_sql(schema_ddl: str, sql: str) -> SQLValidation:
         # to SQLite, so semicolons and keywords inside literals/comments remain
         # data while a real second statement is rejected.
         connection.execute(f"EXPLAIN {sql.strip()}")
-    except sqlite3.Error as exc:
+    except (sqlite3.Error, sqlite3.Warning) as exc:
         if denied:
             return SQLValidation(False, "only read-only SELECT statements are allowed")
         if "one statement" in str(exc).lower():
