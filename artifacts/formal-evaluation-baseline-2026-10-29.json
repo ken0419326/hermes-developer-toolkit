@@ -1,0 +1,71 @@
+{
+  "evidence_type": "sanitized formal Hermes evaluation baseline",
+  "evaluated_at": "2026-10-29",
+  "evaluated_commit": "1414714f21034177d3b663b3f6d443f72b7011ed",
+  "hermes_version": "0.16.0 (2026.6.5), upstream c6b0eb4d",
+  "requested_model": "gpt-6-luna",
+  "provider_label_unverified": "openai-codex",
+  "raw_baseline": {
+    "formal_json_sha256": "367ea575d88bc28b3a4d166989ca40a2706aa66f5889adba1bc9326d2f205d37",
+    "formal_summary_json_sha256": "d6016818188d2f9bc266207571c1c163f5a6733bb35f899b8554984ba0a6be03",
+    "preservation": "The ignored raw files remain unchanged locally. They are not published because they contain structured model outputs and environment metadata."
+  },
+  "execution": {
+    "distinct_tasks": 40,
+    "repeats": 3,
+    "planned_agent_invocations": 120,
+    "recorded_agent_invocations": 120,
+    "unrun_agent_invocations": 0,
+    "fixture_or_mock_used": false,
+    "resume_launches": 0,
+    "diagnostic_reproduction_invocations": 0
+  },
+  "overall": {
+    "passed": 114,
+    "failed": 6,
+    "success_rate": 0.95,
+    "tasks_passing_all_three_repeats": 37,
+    "all_repeats_success_rate": 0.925,
+    "recorded_seconds_sum": 2334.982,
+    "median_seconds": 16.33,
+    "p95_seconds": 35.837
+  },
+  "by_repeat": [
+    {"repeat": 1, "passed": 38, "failed": 2, "success_rate": 0.95},
+    {"repeat": 2, "passed": 38, "failed": 2, "success_rate": 0.95},
+    {"repeat": 3, "passed": 38, "failed": 2, "success_rate": 0.95}
+  ],
+  "by_skill": {
+    "text2sql": {"passed": 30, "failed": 0, "success_rate": 1.0, "tasks_passing_all_repeats": 10},
+    "code-author": {"passed": 30, "failed": 0, "success_rate": 1.0, "tasks_passing_all_repeats": 10},
+    "code-reviewer": {"passed": 30, "failed": 0, "success_rate": 1.0, "tasks_passing_all_repeats": 10},
+    "bug-hunter": {"passed": 24, "failed": 6, "success_rate": 0.8, "tasks_passing_all_repeats": 7}
+  },
+  "bug_hunter": {
+    "known_buggy_runs": 15,
+    "known_buggy_runs_with_correct_validated_report": 9,
+    "known_buggy_success_rate": 0.6,
+    "known_clean_runs": 15,
+    "known_clean_runs_passed": 15,
+    "graded_runs": 24,
+    "ungraded_runs": 6,
+    "tp": 9,
+    "fp": 0,
+    "fn": 0,
+    "tn": 15,
+    "precision_among_graded": 1.0,
+    "recall_among_graded": 1.0,
+    "specificity_among_graded": 1.0,
+    "interpretation": "Recall is 100% only among the 24 graded runs. Six known-buggy runs produced no valid result and remain ungraded failures; the end-to-end known-buggy success count is 9/15."
+  },
+  "failure_categories": {
+    "invalid_result": 6
+  },
+  "limits": [
+    "This is a public synthetic regression suite, not an independent sealed held-out benchmark.",
+    "Repeated runs are correlated and are not independent tasks.",
+    "The requested provider label and model string are metadata, not backend attestation.",
+    "Latency includes agent execution and local grading, not model-only latency.",
+    "The baseline failures were preserved and were not deleted, replaced, or retried."
+  ]
+}

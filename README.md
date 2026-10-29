@@ -129,8 +129,19 @@ python scripts/evaluate.py --dry-run
 ```
 
 See [docs/EVALUATION.md](docs/EVALUATION.md) for the pilot, opt-in live commands,
-metrics, budgets, and limits. **The 120-run live evaluation has not been executed
-or scored by adding this harness.** Offline evaluator tests are not model results.
+metrics, budgets, and limits. On 2026-10-29, the frozen PR #2 program commit
+`1414714f21034177d3b663b3f6d443f72b7011ed` completed all 120 planned real-model
+invocations with Hermes v0.16.0, requested model `gpt-6-luna`, and unverified
+provider label `openai-codex`. The end-to-end result was 114/120; Text2SQL,
+Code Author, and Code Reviewer were each 30/30, while Bug Hunter was 24/30.
+See the sanitized [baseline](artifacts/formal-evaluation-baseline-2026-10-29.json)
+and [failure analysis](artifacts/formal-evaluation-failure-analysis-2026-10-29.md).
+
+This formal public synthetic regression result is separate from the reproducible
+offline tests, the earlier five-case live smoke check, and the historical course
+Text2SQL 29/30. It is not an independent held-out benchmark or a claim of general
+model accuracy or production reliability. Offline evaluator tests remain
+test-double results, not model results.
 
 ## Configuring a provider or model
 
@@ -177,4 +188,3 @@ See [docs/PROVENANCE.md](docs/PROVENANCE.md) for the division between Hermes/ups
 ## License
 
 The portfolio code in this repository is MIT licensed. Hermes Agent is a separate upstream project governed by its own license and terms.
-

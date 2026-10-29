@@ -3,7 +3,52 @@
 This protocol extends the five-case live smoke check with a **public synthetic
 regression suite**: 40 distinct tasks, 10 per skill, each run three times by
 default. It is not an external benchmark, a sealed held-out set, or a production
-reliability claim. No large-suite live results are claimed by this change.
+reliability claim.
+
+## Recorded 2026-10-29 baseline
+
+The frozen program commit
+`1414714f21034177d3b663b3f6d443f72b7011ed` completed all 120 planned real-model
+agent invocations with Hermes v0.16.0, requested model `gpt-6-luna`, and
+user-supplied provider label `openai-codex`. The label and model string are
+metadata, not backend attestation. No fixture or mock replaced live execution.
+
+| Scope | Passed | Recorded | Success rate | Tasks passing all three repeats |
+| --- | ---: | ---: | ---: | ---: |
+| Overall | 114 | 120 | 95% | 37/40 |
+| Text2SQL | 30 | 30 | 100% | 10/10 |
+| Code Author | 30 | 30 | 100% | 10/10 |
+| Code Reviewer | 30 | 30 | 100% | 10/10 |
+| Bug Hunter | 24 | 30 | 80% | 7/10 |
+
+Each repeat was 38/40. Overall recorded latency had a 16.330-second median and
+35.837-second p95; the 120 recorded durations summed to 2334.982 seconds.
+Latency includes agent execution and local grading.
+
+For Bug Hunter, 9 of the 15 known-buggy runs produced a correct validated
+report, while all 15 known-clean runs passed. Binary verdict metrics among the
+24 graded runs were TP=9, FP=0, FN=0, and TN=15. Thus recall among graded runs
+was 100%, but it must always be reported with the six ungraded `invalid_result`
+failures; the end-to-end known-buggy success count is 9/15, not 15/15.
+
+Hermes session records directly explained all six failures, so no diagnostic
+reproduction was run. Each agent called the Bug Hunter wrapper, corrected an
+initial `line` versus `line_start`/`line_end` contract error, but ended with an
+unsupported type synonym and no valid result. The original failures were not
+deleted, replaced, or retried. Details are in the sanitized
+[failure analysis](../artifacts/formal-evaluation-failure-analysis-2026-10-29.md).
+
+Published artifacts and hashes:
+
+- Sanitized baseline: [`artifacts/formal-evaluation-baseline-2026-10-29.json`](../artifacts/formal-evaluation-baseline-2026-10-29.json), SHA-256 `3318d7b77caca39497adf5a1a74d4ae55db9e4aa30dd66c0e9103227850495b4`.
+- Sanitized failure analysis: [`artifacts/formal-evaluation-failure-analysis-2026-10-29.md`](../artifacts/formal-evaluation-failure-analysis-2026-10-29.md), SHA-256 `f60d9edcb2c90fc0d8713718dd4e40587d6880b4ea275e13b9a8c3d0607a960b`.
+- Preserved ignored raw checkpoint SHA-256: `367ea575d88bc28b3a4d166989ca40a2706aa66f5889adba1bc9326d2f205d37`.
+- Preserved ignored raw summary SHA-256: `d6016818188d2f9bc266207571c1c163f5a6733bb35f899b8554984ba0a6be03`.
+
+The raw files contain structured model output and environment metadata and are
+not public artifacts. The sanitized files omit private paths, session IDs, and
+raw conversation content. This baseline is distinct from the offline suite and
+the earlier five-case smoke run.
 
 ## What is measured
 
