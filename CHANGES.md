@@ -2,6 +2,15 @@
 
 This repository was rebuilt beside the original course project rather than rewriting its history.
 
+## Live verification record
+
+- On 2026-10-29, exercised commit `3143086bfcb18d679ea971ce19c19daef945477b` with Hermes v0.16.0, provider `openai-codex`, and model `gpt-6-luna`.
+- Passed five real-model smoke cases across the four independent skills: Text2SQL, Code Author, Bug Hunter with buggy and correct inputs, and Code Reviewer. No fixture or mock substituted for these live executions.
+- Published a sanitized evidence record with per-case checks and elapsed times. Raw session exports, credentials, local configuration, private paths, and original conversation content are not published.
+- Kept `designated_tool_call_proven` false. Manual trace review confirmed terminal calls, but that is not automated proof from the verifier.
+- Recorded that the buggy Bug Hunter case passed on its third internal candidate submission after two contract failures, without an outer verifier retry, and that the clean case's simple `printf` path does not establish arbitrary shell-content safety.
+- These five smoke cases are distinct from the offline suite and the historical course Text2SQL 29/30 result; they do not establish general accuracy, production reliability, or a chained generate-review-repair workflow.
+
 ## Reliability
 
 - Replaced four independent output writers with one shared contract and atomic writer.

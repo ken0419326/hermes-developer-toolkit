@@ -110,7 +110,11 @@ HERMES_INTEGRATION=1 pytest -m integration
 
 The offline suite covers successful results, contract failures, Unicode, single/double quotes, newlines, shell metacharacters, working-directory-independent skill wrappers, atomic writes, SQL lexical edge cases, Python entry/import/sample checks, subprocess diagnostics and timeout, reviewer positive/negative cases, and mocked Hermes success/error/timeout/final-validation boundaries.
 
-Integration tests do not silently fall back to mocks. Without `HERMES_INTEGRATION=1` and a configured Hermes installation, they are reported as skipped. The former course gateway is no longer available, so this portfolio edition has not been evaluated with a live LLM.
+Integration tests do not silently fall back to mocks. Without `HERMES_INTEGRATION=1` and a configured Hermes installation, they are reported as skipped.
+
+On 2026-10-29, commit `3143086bfcb18d679ea971ce19c19daef945477b` was separately exercised with Hermes v0.16.0, provider `openai-codex`, and model `gpt-6-luna`. All five controlled live smoke cases passed: Text2SQL, Code Author, Bug Hunter with buggy and correct inputs, and Code Reviewer. These were real-model executions, not fixture or mock substitutions. See [docs/LIVE_SMOKE.md](docs/LIVE_SMOKE.md) and the sanitized [evidence record](artifacts/live-verification-2026-10-29.json) for checks, timings, and limitations.
+
+The offline suite, those five live smoke cases, and the historical course Text2SQL score of 29/30 are three distinct forms of evidence. The live run is not an overall accuracy, generalization, or production-reliability measurement. The four skills are independent task entry points; they are not presented as a complete automated generate-review-repair chain.
 
 ## Configuring a provider or model
 
@@ -122,9 +126,9 @@ Copy and edit [`examples/hermes-config.example.yaml`](examples/hermes-config.exa
 4. Point `skills.external_dirs` to this repository's `skills` directory.
 5. Run the integration test explicitly.
 
-No endpoint or model is required for offline validation. No live endpoint/model combination has been verified for this refactored edition.
+No endpoint or model is required for offline validation. The specific live combination recorded above has been smoke-tested; other Hermes, provider, and model combinations remain unverified.
 
-See [docs/HERMES_COMPATIBILITY.md](docs/HERMES_COMPATIBILITY.md) for the checked CLI flags, task-file handoff, skill-directory template, local compatibility observation, and explicitly unverified live behavior.
+See [docs/HERMES_COMPATIBILITY.md](docs/HERMES_COMPATIBILITY.md) for the checked CLI flags, task-file handoff, skill-directory template, verified combination, and remaining compatibility limits.
 
 ## Test and CI commands
 
@@ -142,8 +146,8 @@ GitHub Actions installs the package on Python 3.10 and 3.12, runs the offline de
 - Python subprocess execution is not a hostile-code sandbox.
 - The static reviewer intentionally implements a small rule set and may miss defects outside it.
 - The range-boundary rule needs explicit all-items intent; it does not flag adjacent-pair algorithms.
-- Real Hermes/model behavior, retry quality, latency, and token cost remain unmeasured for this edition.
-- The task-file/environment handoff is covered at the subprocess boundary, but has not been exercised through a live model and terminal tool call.
+- Five controlled tasks were exercised through one Hermes/provider/model combination, but retry quality, token cost, broad task behavior, and other configurations remain unmeasured.
+- Manual inspection of sanitized session traces confirmed terminal calls in the five smoke runs. The verifier's `designated_tool_call_proven` field remains false because final results alone cannot automatically prove which tool was called.
 - A future evaluation should use a redistributable labeled dataset and report precision/recall separately from determinism.
 
 ## Provenance and historical result
