@@ -42,7 +42,7 @@ def build_cases() -> list[dict]:
 
     def code(name, description, reference, public, private):
         cases.append({"id": "code-" + name, "skill": "code-author", "task": {
-            "task_description": description,
+            "task_description": description + " Leave all input arguments unchanged.",
             "constraints": {"entry_function": name, "imports_forbidden": ["os", "subprocess", "socket", "pathlib"]},
             "sample_inputs": [{"input": a, "expected": b} for a, b in public],
         }, "oracle": {"kind": "python", "reference": reference,
