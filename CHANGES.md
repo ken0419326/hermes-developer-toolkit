@@ -2,6 +2,14 @@
 
 This repository was rebuilt beside the original course project rather than rewriting its history.
 
+## Repeatable evaluation harness
+
+- Added 40 public synthetic tasks, balanced across four skills, and a fixed-seed repeated-run plan (120 agent invocations by default).
+- Added multi-fixture SQL result checks, extra Python functional/non-mutation samples, controlled defect oracles, and independently authored static-rule gold findings.
+- Added atomic checkpoints, exclusive writer locks, strict resume identity checks, execution budgets, and failure-preserving summaries with per-skill success, repeat stability, latency, and bug-verdict metrics.
+- Left first-candidate success, internal candidate counts, token cost, effective model identity, and automatic tool-call proof explicitly unmeasured.
+- Added offline evaluator regression tests and a documented pilot/formal protocol. No large-suite live result is claimed.
+
 ## Live verification record
 
 - On 2026-10-29, exercised commit `3143086bfcb18d679ea971ce19c19daef945477b` with Hermes v0.16.0, provider `openai-codex`, and model `gpt-6-luna`.
@@ -49,3 +57,4 @@ After extending the working-directory regression from two wrappers to all four, 
 - Preload the selected skill with `-s`, pass an explicit task-file instruction, and expose task/candidate/output paths through environment variables.
 - Use `${HERMES_SKILL_DIR}` and forward wrapper CLI arguments so every skill works outside its own directory.
 - Replace shell-interpolated candidate examples with literal-heredoc JSON files passed via `--candidate`.
+
