@@ -1,6 +1,7 @@
 # Hermes CLI and skill compatibility
 
-This document records interface checks, not a live-model evaluation.
+This document records both interface checks and one narrowly scoped live-model
+compatibility observation. It is not a general model evaluation.
 
 ## Locally inspected version
 
@@ -33,13 +34,27 @@ It preloads the requested skill with `-s` and sends a query that includes the ex
 
 Offline boundary tests verify argv construction, environment handoff, paths containing spaces/quotes/Unicode, wrapper execution from unrelated working directories, and result finalization.
 
-## Not verified
+## Live compatibility observation
 
-No provider or model was called during this hardening work. The following remain unverified:
+On 2026-10-29, repository commit
+`3143086bfcb18d679ea971ce19c19daef945477b` completed all five controlled
+smoke cases with Hermes v0.16.0, provider `openai-codex`, and model
+`gpt-6-luna`. This used real model execution, not fixtures or mocks. The checks
+and elapsed times are recorded in [LIVE_SMOKE.md](LIVE_SMOKE.md).
 
-- whether a particular live model follows the task-file instruction;
-- terminal-tool environment propagation in every Hermes backend/container mode;
-- provider-specific tool-calling, retry, latency, and token behavior;
-- Hermes releases other than the locally inspected v0.16.0 interface.
+Manual review of sanitized traces confirmed terminal calls. The verifier still
+records `designated_tool_call_proven: false`, because a successful final result
+does not itself prove which tool produced it. This manual trace observation is
+not automated attestation.
 
-Mocked subprocess tests are not reported as live Hermes integration results.
+The following remain unverified:
+
+- task-file and terminal behavior in other Hermes backends, container modes, releases, providers, or models;
+- arbitrary quoting, newline, and shell-special-character reliability when a model chooses `printf` rather than the documented file-safe pattern;
+- provider-specific retry quality, token cost, and broad latency behavior;
+- accuracy, generalization, or production reliability beyond the five controlled cases;
+- orchestration of the four independent skills into an automated generate-review-repair chain.
+
+Mocked subprocess tests remain offline results and are not reported as live
+Hermes integration. The original course Text2SQL 29/30 result is historical and
+does not apply to this compatibility run.

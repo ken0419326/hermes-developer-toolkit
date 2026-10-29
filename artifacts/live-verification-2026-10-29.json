@@ -1,0 +1,73 @@
+{
+  "evidence_type": "live Hermes smoke verification",
+  "verified_at": "2026-10-29 Asia/Taipei",
+  "repository": "hermes-developer-toolkit",
+  "branch": "test/live-skill-verification-20261029",
+  "verified_commit": "3143086bfcb18d679ea971ce19c19daef945477b",
+  "hermes_version": "0.16.0 (2026.6.5), upstream c6b0eb4d",
+  "provider": "openai-codex",
+  "model": "gpt-6-luna",
+  "execution": {
+    "real_model": true,
+    "fixture_or_mock_used_for_live_cases": false,
+    "outer_verifier_retries": 0,
+    "case_count": 5,
+    "total_case_seconds": 93.898
+  },
+  "dry_run": {
+    "completed": true,
+    "model_calls": 0,
+    "case_count": 5
+  },
+  "all_passed": true,
+  "cases": [
+    {
+      "case": "text2sql",
+      "status": "PASS",
+      "runner_status": "success",
+      "answer_check": "executed read-only SQL on non-empty controlled data and matched expected rows",
+      "seconds": 12.667,
+      "designated_tool_call_proven": false
+    },
+    {
+      "case": "code-author",
+      "status": "PASS",
+      "runner_status": "success",
+      "answer_check": "passed additional boundary cases not present in the public task samples",
+      "seconds": 12.016,
+      "designated_tool_call_proven": false
+    },
+    {
+      "case": "bug-hunter-buggy",
+      "status": "PASS",
+      "runner_status": "success",
+      "answer_check": "identified the known empty-list defect at the relevant source line",
+      "seconds": 42.046,
+      "designated_tool_call_proven": false,
+      "observation": "During one agent execution, the first two candidate submissions failed contract validation and the third passed. These were internal candidate attempts, not outer verifier retries."
+    },
+    {
+      "case": "bug-hunter-clean",
+      "status": "PASS",
+      "runner_status": "success",
+      "answer_check": "accepted the controlled correct implementation",
+      "seconds": 16.612,
+      "designated_tool_call_proven": false,
+      "observation": "The agent used printf to write this simple JSON candidate. Success with the controlled content does not establish reliability for arbitrary quotes, newlines, or shell-special characters."
+    },
+    {
+      "case": "code-reviewer",
+      "status": "PASS",
+      "runner_status": "success",
+      "answer_check": "matched the deterministic reviewer result computed from the authoritative task",
+      "seconds": 10.557,
+      "designated_tool_call_proven": false
+    }
+  ],
+  "manual_trace_review": {
+    "terminal_calls_observed_for_all_cases": true,
+    "automated_tool_call_proof": false,
+    "note": "A human inspected sanitized session traces and confirmed terminal calls. The verifier cannot prove designated tool use from final results alone."
+  },
+  "scope_limit": "Five controlled smoke cases only. This is not a measure of overall accuracy, generalization, or production reliability, and the four skills were exercised as independent task entry points rather than an automated generate-review-repair chain."
+}
