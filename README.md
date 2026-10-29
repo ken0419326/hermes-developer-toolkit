@@ -31,7 +31,7 @@ Hermes (optional) ──> skill prompt ──> terminal wrapper ──> shared p
 offline demo       ──> fixture candidate ────────────────> shared pipeline
 ```
 
-The candidate normally omits `task_id`; the pipeline obtains it from the original task. If a model restates a different ID, processing fails. SQL and Python are carried inside JSON through stdin or files rather than interpolated into shell arguments.
+The candidate normally omits `task_id`; the pipeline obtains it from the original task. If a model restates a different ID, processing fails. SQL and Python are carried inside JSON files/stdin rather than interpolated into shell arguments. After Hermes exits, the runner re-runs SQL or Python validation and replaces any model-supplied `validation` field. Code Reviewer output must exactly match deterministic analysis of the original task.
 
 ## Quickstart: no API key required
 
@@ -92,11 +92,11 @@ Complete runnable examples are under [`examples/`](examples/).
 
 ## Output and error handling
 
-The central contract rejects missing files, invalid JSON, non-object roots, missing fields, incorrect types, non-finite confidence, task-ID mismatches, invalid source ranges, SQL compilation failures, Python validation failures, tool failures, and timeouts.
+The central contract rejects missing files, invalid JSON, non-object roots, missing fields, incorrect types, non-finite confidence, task-ID mismatches, invalid source ranges, SQL compilation failures, Python validation failures, tool failures, and timeouts. SQLite itself parses statement boundaries, literals, comments, quoted identifiers, and functions; an SQLite authorizer rejects actual write/schema operations without keyword-matching string contents.
 
 Only a fully validated result is written. The writer creates a temporary file in the destination directory, flushes and `fsync`s it, then replaces the destination atomically. Details are in [docs/CONTRACTS.md](docs/CONTRACTS.md).
 
-Candidate Python samples run in separate subprocesses with bounded timeouts. This limits hangs and keeps candidate globals out of the validator process; it is **not a secure sandbox for hostile code**. Do not run untrusted code without OS-level isolation.
+Candidate Python samples run in separate subprocesses with bounded timeouts. Candidate stdout/stderr are captured as diagnostic fields and kept separate from the worker's machine-readable JSON protocol. This limits hangs and keeps candidate globals out of the validator process; it is **not a secure sandbox for hostile code**. Do not run untrusted code without OS-level isolation.
 
 ## Offline tests versus real-model tests
 
@@ -108,7 +108,7 @@ pytest -m 'not integration'
 HERMES_INTEGRATION=1 pytest -m integration
 ```
 
-The offline suite covers successful results, contract failures, Unicode, quotes and newlines, atomic writes, SQL checks, Python entry/import/sample checks, subprocess timeout, reviewer positive and negative cases, and mocked Hermes success/error/timeout boundaries.
+The offline suite covers successful results, contract failures, Unicode, single/double quotes, newlines, shell metacharacters, working-directory-independent skill wrappers, atomic writes, SQL lexical edge cases, Python entry/import/sample checks, subprocess diagnostics and timeout, reviewer positive/negative cases, and mocked Hermes success/error/timeout/final-validation boundaries.
 
 Integration tests do not silently fall back to mocks. Without `HERMES_INTEGRATION=1` and a configured Hermes installation, they are reported as skipped. The former course gateway is no longer available, so this portfolio edition has not been evaluated with a live LLM.
 
@@ -123,6 +123,8 @@ Copy and edit [`examples/hermes-config.example.yaml`](examples/hermes-config.exa
 5. Run the integration test explicitly.
 
 No endpoint or model is required for offline validation. No live endpoint/model combination has been verified for this refactored edition.
+
+See [docs/HERMES_COMPATIBILITY.md](docs/HERMES_COMPATIBILITY.md) for the checked CLI flags, task-file handoff, skill-directory template, local compatibility observation, and explicitly unverified live behavior.
 
 ## Test and CI commands
 
@@ -141,6 +143,7 @@ GitHub Actions installs the package on Python 3.10 and 3.12, runs the offline de
 - The static reviewer intentionally implements a small rule set and may miss defects outside it.
 - The range-boundary rule needs explicit all-items intent; it does not flag adjacent-pair algorithms.
 - Real Hermes/model behavior, retry quality, latency, and token cost remain unmeasured for this edition.
+- The task-file/environment handoff is covered at the subprocess boundary, but has not been exercised through a live model and terminal tool call.
 - A future evaluation should use a redistributable labeled dataset and report precision/recall separately from determinism.
 
 ## Provenance and historical result

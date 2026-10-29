@@ -16,11 +16,12 @@ Use for deterministic checks of a Python snippet supplied in the original task.
 
 ## Procedure
 
-Run `python3 scripts/run.py`. Do not manufacture findings in chat and do not pass a model-generated candidate.
+1. Read the authoritative task with `python3 -m json.tool "$HERMES_TOOLKIT_TASK_PATH"`.
+2. Run `python3 "${HERMES_SKILL_DIR}/scripts/run.py"`. Do not manufacture findings in chat and do not pass a model-generated candidate.
 
 ## Verification
 
-The reviewer parses the source and emits deterministic findings for its documented rule set. Repeated identical inputs produce identical JSON content.
+The reviewer reads source from the original task file, not from model output, and emits deterministic findings for its documented rule set. Repeated identical inputs produce identical JSON content. `${HERMES_SKILL_DIR}` is an absolute path supplied by Hermes, so the command is working-directory independent.
 
 ## Boundaries
 

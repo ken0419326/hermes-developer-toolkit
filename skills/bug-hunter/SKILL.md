@@ -16,14 +16,23 @@ Use when a task contains Python `code`, its intended behavior, and optional cons
 
 ## Procedure
 
-1. Compare the code with the stated behavior. Report correctness defects, not style preferences.
+1. Read the authoritative task with `python3 -m json.tool "$HERMES_TOOLKIT_TASK_PATH"`. Compare that code with the stated behavior. Report correctness defects, not style preferences.
 2. Use 1-indexed source locations and only supported severities and bug types.
-3. Submit `verdict`, `bugs`, and `confidence` as JSON through stdin to `python3 scripts/run.py`; omit `task_id`.
+3. Write `verdict`, `bugs`, and `confidence` as JSON to `HERMES_TOOLKIT_CANDIDATE_PATH`; omit `task_id`. Use a quoted literal heredoc, then invoke the absolute skill script:
+
+   ```bash
+   cat > "$HERMES_TOOLKIT_CANDIDATE_PATH" <<'HERMES_CANDIDATE_JSON'
+   {"verdict":"clean","bugs":[],"confidence":0.8}
+   HERMES_CANDIDATE_JSON
+   python3 "${HERMES_SKILL_DIR}/scripts/run.py" --candidate "$HERMES_TOOLKIT_CANDIDATE_PATH"
+   ```
+
+   The quoted delimiter prevents shell expansion of candidate content.
 4. If the validator rejects the report, fix its structure once. Do not invent a defect merely to satisfy the schema.
 
 ## Verification
 
-The toolkit binds the original task ID, checks all fields and source ranges, enforces verdict/report consistency, and atomically writes only valid results.
+The toolkit binds the original task ID, checks all fields and source ranges, enforces verdict/report consistency, and atomically writes only valid results. `${HERMES_SKILL_DIR}` makes the command independent of the current working directory.
 
 ## Boundaries
 

@@ -1,3 +1,5 @@
+import sys
+
 from hermes_toolkit.python_validation import validate_python
 
 
@@ -73,3 +75,35 @@ def test_timeout_is_bounded():
     )
     assert not result.ok
     assert "timed out" in result.samples[0].error
+
+
+def test_candidate_stdout_does_not_corrupt_worker_protocol():
+    result = validate_python(
+        "def greet(name):\n    print(\"debug: 'quoted' $HOME 台灣\")\n    return f'hello {name}'\n",
+        entry_function="greet",
+        samples=[{"input": ["Ada"], "expected": "hello Ada"}],
+    )
+    assert result.ok
+    assert result.samples[0].stdout == "debug: 'quoted' $HOME 台灣\n"
+    assert result.samples[0].stderr == ""
+
+
+def test_candidate_stderr_is_preserved_on_success():
+    result = validate_python(
+        "import sys\ndef echo(value):\n    print('diagnostic', file=sys.stderr)\n    return value\n",
+        entry_function="echo",
+        samples=[{"input": [3], "expected": 3}],
+    )
+    assert result.ok
+    assert result.samples[0].stderr == "diagnostic\n"
+
+
+def test_candidate_output_is_preserved_on_exception():
+    result = validate_python(
+        "def fail():\n    print('before failure')\n    raise RuntimeError('boom')\n",
+        entry_function="fail",
+        samples=[{"input": [], "expected": None}],
+    )
+    assert not result.ok
+    assert "RuntimeError" in result.samples[0].error
+    assert result.samples[0].stdout == "before failure\n"

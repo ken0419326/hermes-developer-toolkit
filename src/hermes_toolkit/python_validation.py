@@ -5,6 +5,7 @@ import json
 import subprocess
 import sys
 from dataclasses import dataclass, asdict
+from pathlib import Path
 from typing import Any
 
 
@@ -13,6 +14,8 @@ class SampleResult:
     index: int
     passed: bool
     error: str = ""
+    stdout: str = ""
+    stderr: str = ""
 
 
 @dataclass(frozen=True)
@@ -49,7 +52,7 @@ def _run_sample(code: str, entry: str, sample: dict[str, Any], index: int, timeo
     }
     try:
         process = subprocess.run(
-            [sys.executable, "-m", "hermes_toolkit._sample_worker"],
+            [sys.executable, str(Path(__file__).with_name("_sample_worker.py"))],
             input=json.dumps(payload, ensure_ascii=False),
             text=True,
             capture_output=True,
@@ -62,16 +65,28 @@ def _run_sample(code: str, entry: str, sample: dict[str, Any], index: int, timeo
         response = json.loads(process.stdout)
     except json.JSONDecodeError:
         detail = process.stderr.strip() or process.stdout.strip() or f"worker exited {process.returncode}"
-        return SampleResult(index, False, f"sample worker produced invalid output: {detail}")
+        return SampleResult(
+            index, False, f"sample worker produced invalid output: {detail}",
+            stdout=process.stdout, stderr=process.stderr,
+        )
+    captured_stdout = response.get("stdout", "")
+    captured_stderr = response.get("stderr", "")
+    if not isinstance(captured_stdout, str) or not isinstance(captured_stderr, str):
+        return SampleResult(index, False, "sample worker returned invalid diagnostic streams")
     if not response.get("ok"):
-        return SampleResult(index, False, f"{response.get('error_type', 'Error')}: {response.get('error', '')}")
+        return SampleResult(
+            index, False, f"{response.get('error_type', 'Error')}: {response.get('error', '')}",
+            stdout=captured_stdout, stderr=captured_stderr,
+        )
     if "expected" in sample and response.get("value") != sample["expected"]:
         return SampleResult(
             index,
             False,
             f"expected {sample['expected']!r}, got {response.get('value')!r}",
+            stdout=captured_stdout,
+            stderr=captured_stderr,
         )
-    return SampleResult(index, True)
+    return SampleResult(index, True, stdout=captured_stdout, stderr=captured_stderr)
 
 
 def validate_python(

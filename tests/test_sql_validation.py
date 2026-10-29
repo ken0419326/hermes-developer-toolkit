@@ -7,7 +7,8 @@ SCHEMA = """
 CREATE TABLE developers (
   id INTEGER PRIMARY KEY,
   name TEXT NOT NULL,
-  team_id INTEGER
+  team_id INTEGER,
+  "DELETE" TEXT
 );
 CREATE TABLE teams (id INTEGER PRIMARY KEY, name TEXT NOT NULL);
 """
@@ -18,6 +19,12 @@ CREATE TABLE teams (id INTEGER PRIMARY KEY, name TEXT NOT NULL);
     "SELECT d.name FROM developers d JOIN teams t ON d.team_id=t.id WHERE t.name='AI';",
     "WITH ai AS (SELECT id FROM teams WHERE name='AI') SELECT name FROM developers WHERE team_id IN ai",
     "-- read only\nSELECT '引號 '' 與 Unicode 測試'",
+    "SELECT 'a;b';",
+    "SELECT 'DELETE';",
+    "SELECT REPLACE('abc', 'a', 'x');",
+    'SELECT "DELETE" FROM developers;',
+    "/* DELETE; DROP TABLE teams; */ SELECT name FROM developers;",
+    "SELECT '-- UPDATE developers;';",
 ])
 def test_valid_queries(sql):
     assert validate_sql(SCHEMA, sql).ok
@@ -43,3 +50,15 @@ def test_bad_schema_reported():
     result = validate_sql("CREATE TABL broken", "SELECT 1")
     assert not result.ok
     assert "SQLite validation failed" in result.error
+
+
+@pytest.mark.parametrize("sql", [
+    "SELECT 1; DELETE FROM developers",
+    "WITH selected AS (SELECT id FROM developers) DELETE FROM developers",
+    "DROP TABLE developers",
+    "CREATE TABLE unauthorized(id INTEGER)",
+])
+def test_real_second_statements_and_mutations_are_rejected(sql):
+    result = validate_sql(SCHEMA, sql)
+    assert not result.ok
+    assert result.error

@@ -8,13 +8,13 @@ All successful results are JSON objects with `task_id` and numeric `confidence` 
 
 Required candidate fields: `sql`, `rationale`, `confidence`.
 
-Before writing, the pipeline checks that the query is a single read-only SQLite `SELECT` or `WITH` statement and compiles it with `EXPLAIN` against the supplied schema.
+Before writing, the pipeline checks that the query is a single read-only SQLite `SELECT` or `WITH` statement and compiles it with `EXPLAIN` against the supplied schema. SQLite—not a keyword regex—parses literals, comments, quoted identifiers, functions, and statement boundaries. An authorizer denies actual write, schema, PRAGMA, attach, and transaction actions.
 
 ## Code Author
 
 Required candidate fields: `code`, `rationale`, `confidence`.
 
-Before writing, the pipeline parses the source, checks the requested top-level entry function, rejects forbidden imports, and executes supplied samples in independent subprocesses with a bounded timeout.
+Before writing, the pipeline parses the source, checks the requested top-level entry function, rejects forbidden imports, and executes supplied samples in independent subprocesses with a bounded timeout. Candidate stdout and stderr are returned as diagnostic fields and do not share the worker's machine-readable channel.
 
 ## Bug Hunter
 
@@ -25,6 +25,10 @@ Semantic bug accuracy remains a model-evaluation concern; schema validation cann
 ## Code Reviewer
 
 The deterministic reviewer does not accept model findings. It derives `verdict`, `findings`, and `confidence` from the task source using the documented static rules.
+
+## Hermes finalization
+
+The Hermes runner treats the result file as untrusted. Text2SQL and Code Author results pass through the same deterministic pipeline again before `success`; model-provided validation claims are overwritten. Code Reviewer output is recomputed from the original task and must exactly match the result file. Bug Hunter receives structural/source-range validation because semantic bug accuracy is an evaluation concern.
 
 ## Failure behavior
 
