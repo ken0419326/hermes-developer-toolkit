@@ -1,0 +1,5 @@
+{
+  "task_id": "demo-review-001",
+  "task_description": "Review this helper for concrete runtime risks.",
+  "code": "def run_expression(expression):\n    return eval(expression)\n"
+}

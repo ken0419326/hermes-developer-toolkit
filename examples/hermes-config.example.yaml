@@ -1,0 +1,20 @@
+# Example only. Choose an OpenAI-compatible endpoint and model you are authorized to use.
+providers:
+  - id: my-provider
+    type: openai
+    base_url: https://example.invalid/v1
+    key_env: MY_PROVIDER_API_KEY
+
+models:
+  - id: my-model
+    provider: my-provider
+    model: provider-model-name
+
+default_model: my-model
+
+skills:
+  external_dirs:
+    - /path/to/hermes-developer-toolkit/skills
+
+# Set provider-appropriate context and output limits in your local Hermes config.
+# Do not commit credentials or personal absolute paths.

@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hermes-developer-toolkit"
+version = "1.0.0"
+description = "Offline-verifiable developer skills and output contracts for Hermes Agent"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Ken Shen"}]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest==8.3.3"]
+
+[project.scripts]
+hermes-toolkit = "hermes_toolkit.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]
+markers = ["integration: requires a configured Hermes CLI and a real model provider"]

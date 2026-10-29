@@ -1,0 +1,5 @@
+{
+  "code": "def clamp(value, low, high):\n    return max(low, min(value, high))\n",
+  "rationale": "Compose min and max to enforce both bounds.",
+  "confidence": 0.98
+}

@@ -1,0 +1,5 @@
+{
+  "task_id": "demo-bug-001",
+  "task_description": "Return the first item, or None for an empty list.",
+  "code": "def first_or_none(items):\n    return items[0]\n"
+}

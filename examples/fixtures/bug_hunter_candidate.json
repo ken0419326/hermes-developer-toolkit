@@ -1,0 +1,14 @@
+{
+  "verdict": "buggy",
+  "bugs": [
+    {
+      "line_start": 2,
+      "line_end": 2,
+      "severity": "medium",
+      "type": "edge_case",
+      "description": "Indexing an empty list raises IndexError instead of returning None.",
+      "suggested_fix": "Return None when items is empty."
+    }
+  ],
+  "confidence": 0.99
+}

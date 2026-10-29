@@ -1,0 +1,13 @@
+{
+  "task_id": "demo-code-001",
+  "task_description": "Implement clamp(value, low, high).",
+  "constraints": {
+    "entry_function": "clamp",
+    "imports_forbidden": ["os", "subprocess"]
+  },
+  "sample_inputs": [
+    {"input": [5, 0, 10], "expected": 5},
+    {"input": [-2, 0, 10], "expected": 0},
+    {"input": [20, 0, 10], "expected": 10}
+  ]
+}

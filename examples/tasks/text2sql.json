@@ -1,0 +1,6 @@
+{
+  "task_id": "demo-sql-001",
+  "question": "Return the names of developers on the AI Platform team.",
+  "db_schema": "CREATE TABLE teams (id INTEGER PRIMARY KEY, name TEXT NOT NULL);\nCREATE TABLE developers (id INTEGER PRIMARY KEY, name TEXT NOT NULL, team_id INTEGER NOT NULL);",
+  "dialect": "sqlite"
+}
