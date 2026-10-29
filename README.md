@@ -116,6 +116,22 @@ On 2026-10-29, commit `3143086bfcb18d679ea971ce19c19daef945477b` was separately 
 
 The offline suite, those five live smoke cases, and the historical course Text2SQL score of 29/30 are three distinct forms of evidence. The live run is not an overall accuracy, generalization, or production-reliability measurement. The four skills are independent task entry points; they are not presented as a complete automated generate-review-repair chain.
 
+## Repeatable evaluation beyond smoke tests
+
+A public synthetic regression suite adds **40 distinct tasks × 3 repeats = 120
+planned agent invocations**. It checks SQL execution on multiple data fixtures,
+Python functional boundaries and input mutation, buggy/clean verdicts, and
+independently authored static-rule findings. Checkpointing preserves failures
+and supports resuming without silently retrying failed attempts.
+
+```sh
+python scripts/evaluate.py --dry-run
+```
+
+See [docs/EVALUATION.md](docs/EVALUATION.md) for the pilot, opt-in live commands,
+metrics, budgets, and limits. **The 120-run live evaluation has not been executed
+or scored by adding this harness.** Offline evaluator tests are not model results.
+
 ## Configuring a provider or model
 
 Copy and edit [`examples/hermes-config.example.yaml`](examples/hermes-config.example.yaml) in your local Hermes configuration directory:
@@ -161,3 +177,4 @@ See [docs/PROVENANCE.md](docs/PROVENANCE.md) for the division between Hermes/ups
 ## License
 
 The portfolio code in this repository is MIT licensed. Hermes Agent is a separate upstream project governed by its own license and terms.
+
