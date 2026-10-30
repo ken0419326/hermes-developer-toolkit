@@ -2,13 +2,22 @@
 
 This repository was rebuilt beside the original course project rather than rewriting its history.
 
+## Evaluation closeout (2026-10-30)
+
+- Preserved the original complete 120-run baseline at program commit `1414714f21034177d3b663b3f6d443f72b7011ed`: 114/120 passed (95%), with 37/40 tasks passing all three repeats. The public baseline and failure-analysis artifact bytes and hashes remain unchanged.
+- Diagnosed all six invalid Bug Hunter runs from original Hermes traces: incorrect location fields were corrected, but final candidates still used unsupported type synonyms.
+- At commit `8e6cb0aae4ed6591df9c3a281ae26f841eec27bd`, documented a generic complete buggy candidate, explicit location fields/enums, and whole-candidate checking; validator rejections now list supported values without coercion or relaxed validation.
+- Recorded a separate maintainer-run regression on the same 10 Bug Hunter tasks, three repeats each: 24/30 to 30/30, known-buggy correct reports 9/15 to 15/15, known-clean 15/15 unchanged, and invalid results 6 to 0. Published a sanitized summary with raw-file hashes and explicit evidence provenance.
+- Recorded 176 passing offline tests, one live integration test deselected, and Python 3.10/3.12 CI. No new full 120-run post-fix evaluation or held-out/no-skill comparison is claimed.
+- Synchronized README, evaluation protocol, compatibility observations, and known limits; no new model calls were needed for documentation closeout.
+
 ## Repeatable evaluation harness
 
 - Added 40 public synthetic tasks, balanced across four skills, and a fixed-seed repeated-run plan (120 agent invocations by default).
 - Added multi-fixture SQL result checks, extra Python functional/non-mutation samples, controlled defect oracles, and independently authored static-rule gold findings.
 - Added atomic checkpoints, exclusive writer locks, strict resume identity checks, execution budgets, and failure-preserving summaries with per-skill success, repeat stability, latency, and bug-verdict metrics.
 - Left first-candidate success, internal candidate counts, token cost, effective model identity, and automatic tool-call proof explicitly unmeasured.
-- Added offline evaluator regression tests and a documented pilot/formal protocol. No large-suite live result is claimed.
+- Added offline evaluator regression tests and a documented pilot/formal protocol. At harness introduction no large-suite live result was claimed; subsequent recorded runs are listed above.
 
 ## Live verification record
 
@@ -46,7 +55,7 @@ This repository was rebuilt beside the original course project rather than rewri
 - Normalized multiple-statement rejection across supported Python versions by
   handling the `sqlite3.Warning` raised by Python 3.10 as a validation error.
 
-Regression tests were added before implementation changes. The pre-fix run produced **17 failures, 65 passes, and 1 skipped live integration test**. Confirmed failures covered missing final content validation, forged reviewer output, SQL literal/comment false positives, sample stdout protocol corruption, missing diagnostics, task handoff, and working-directory-sensitive wrappers. Live model compliance with the handoff remains an explicitly unverified risk rather than a test result.
+Regression tests were added before implementation changes. The pre-fix run produced **17 failures, 65 passes, and 1 skipped live integration test**. Confirmed failures covered missing final content validation, forged reviewer output, SQL literal/comment false positives, sample stdout protocol corruption, missing diagnostics, task handoff, and working-directory-sensitive wrappers. At that stage, live model compliance with the handoff remained unverified; later scoped live observations are recorded above.
 
 After extending the working-directory regression from two wrappers to all four, Code Author exposed one additional confirmed defect: its subprocess used module lookup relative to the caller's environment. The worker now launches through its absolute package file path.
 
