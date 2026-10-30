@@ -1,0 +1,86 @@
+{
+  "evidence_type": "maintainer-reported sanitized post-fix Bug Hunter regression summary",
+  "recorded_at": "2026-10-30",
+  "evaluated_commit": "8e6cb0aae4ed6591df9c3a281ae26f841eec27bd",
+  "baseline_evaluated_commit": "1414714f21034177d3b663b3f6d443f72b7011ed",
+  "evidence_provenance": {
+    "source": "Maintainer's local real-Hermes execution report, also recorded in PR #2",
+    "scope": "Summary only; raw checkpoint and summary remain local and Git-ignored. This public summary does not independently reproduce or regrade the raw model outputs.",
+    "raw_checkpoint_sha256": "275076ce0fd59563c3473f72bdcb4b42397ce2f0a4add282b3d0dde9a0e7bd71",
+    "raw_summary_sha256": "e3ca48826a188c0e0abe8c797dc8fd56100fb722cf2efbec49f5a3a962efcbd3",
+    "private_paths_session_ids_credentials_and_raw_conversations_included": false
+  },
+  "environment": {
+    "hermes_version": "0.16.0",
+    "requested_model": "gpt-6-luna",
+    "provider_label_unverified": "openai-codex",
+    "seed": 42,
+    "timeout_seconds": 180,
+    "fixture_or_mock_used": false
+  },
+  "execution": {
+    "skill": "bug-hunter",
+    "distinct_tasks": 10,
+    "buggy_tasks": 5,
+    "clean_tasks": 5,
+    "repeats": 3,
+    "planned_agent_invocations": 30,
+    "recorded_agent_invocations": 30,
+    "unrun_agent_invocations": 0,
+    "resume_launches": 0,
+    "blocked_preflight_launches": 1,
+    "preflight_observation": "The first launch stopped before any task invocation or checkpoint because hermes --version exceeded the evaluator's 10-second timeout during an update check. After the update cache existed, the same evaluation settings completed all 30 planned invocations."
+  },
+  "results": {
+    "passed": 30,
+    "failed": 0,
+    "success_rate": 1.0,
+    "invalid_results": 0,
+    "known_buggy_correct_validated_reports": 15,
+    "known_buggy_runs": 15,
+    "known_clean_passed": 15,
+    "known_clean_runs": 15,
+    "tasks_passing_all_three_repeats": 10,
+    "each_repeat_passed": 10,
+    "graded_runs": 30,
+    "ungraded_runs": 0,
+    "tp": 15,
+    "fp": 0,
+    "fn": 0,
+    "tn": 15,
+    "recorded_seconds_sum": 584.590,
+    "median_seconds": 18.032,
+    "p95_seconds": 27.377
+  },
+  "same_regression_set_comparison": {
+    "baseline_passed": 24,
+    "post_fix_passed": 30,
+    "runs_per_version": 30,
+    "baseline_known_buggy_correct_validated_reports": 9,
+    "post_fix_known_buggy_correct_validated_reports": 15,
+    "known_buggy_runs_per_version": 15,
+    "baseline_known_clean_passed": 15,
+    "post_fix_known_clean_passed": 15,
+    "baseline_invalid_results": 6,
+    "post_fix_invalid_results": 0,
+    "baseline_tasks_passing_all_three_repeats": 7,
+    "post_fix_tasks_passing_all_three_repeats": 10,
+    "baseline_recorded_seconds_sum": 802.039,
+    "baseline_median_seconds": 21.419,
+    "baseline_p95_seconds": 56.994
+  },
+  "changes_under_evaluation": [
+    "Generic complete buggy candidate example and explicit required source-location fields in the Bug Hunter skill",
+    "Allowed type and severity values in the skill and validator rejection messages",
+    "Whole-candidate review after validation errors, with strict rejection retained and no enum coercion"
+  ],
+  "limits": [
+    "The same 10 known public synthetic tasks were used before and after the fix; this is regression evidence, not held-out generalization.",
+    "The original complete evaluation remains 114/120 (95%). The original other-skill results are not combined with these 30 post-fix runs.",
+    "Three repeats of a task are correlated; this is not 30 independent tasks.",
+    "The requested model and provider label are metadata, not backend identity attestation.",
+    "Recorded latency includes agent execution and local grading, not model-only latency.",
+    "First-candidate success, internal candidate submission counts, token cost, and automatic proof of designated tool calls remain unmeasured.",
+    "The two guidance/feedback changes were evaluated together; there was no separate ablation or comparison with a no-skill agent."
+  ]
+}

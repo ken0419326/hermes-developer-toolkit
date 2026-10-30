@@ -116,6 +116,60 @@ On 2026-10-29, commit `3143086bfcb18d679ea971ce19c19daef945477b` was separately 
 
 The offline suite, those five live smoke cases, and the historical course Text2SQL score of 29/30 are three distinct forms of evidence. The live run is not an overall accuracy, generalization, or production-reliability measurement. The four skills are independent task entry points; they are not presented as a complete automated generate-review-repair chain.
 
+## Repeatable evaluation beyond smoke tests
+
+A public synthetic regression suite adds **40 distinct tasks × 3 repeats = 120
+planned agent invocations**. It checks SQL execution on multiple data fixtures,
+Python functional boundaries and input mutation, buggy/clean verdicts, and
+independently authored static-rule findings. Checkpointing preserves failures
+and supports resuming without silently retrying failed attempts.
+
+```sh
+python scripts/evaluate.py --dry-run
+```
+
+See [docs/EVALUATION.md](docs/EVALUATION.md) for the pilot, opt-in live commands,
+metrics, budgets, and limits. On 2026-10-29, the frozen PR #2 program commit
+`1414714f21034177d3b663b3f6d443f72b7011ed` completed all 120 planned real-model
+invocations with Hermes v0.16.0, requested model `gpt-6-luna`, and unverified
+provider label `openai-codex`. The end-to-end result was 114/120; Text2SQL,
+Code Author, and Code Reviewer were each 30/30, while Bug Hunter was 24/30.
+See the sanitized [baseline](artifacts/formal-evaluation-baseline-2026-10-29.json)
+and [failure analysis](artifacts/formal-evaluation-failure-analysis-2026-10-29.md).
+
+This formal public synthetic regression result is separate from the reproducible
+offline tests, the earlier five-case live smoke check, and the historical course
+Text2SQL 29/30. It is not an independent held-out benchmark or a claim of general
+model accuracy or production reliability. Offline evaluator tests remain
+test-double results, not model results.
+
+### Bug Hunter contract repair and regression
+
+The six baseline failures all first used `line` instead of `line_start` /
+`line_end`, then retained unsupported bug-type synonyms after correcting the
+location. Commit `8e6cb0aae4ed6591df9c3a281ae26f841eec27bd` added a complete generic
+candidate example, explicit enums, and validator errors listing allowed values.
+Invalid values remain rejected; they are not silently converted.
+
+The maintainer then ran the **same 10 Bug Hunter tasks, three times each**, as a
+separate real-model regression. Passes increased from **24/30 to 30/30**;
+known-buggy correct validated reports increased from 9/15 to 15/15, while
+known-clean passes stayed 15/15. See the sanitized
+[post-fix summary](artifacts/bug-hunter-regression-2026-10-30.json) and
+[evaluation protocol](docs/EVALUATION.md).
+
+This is improvement on known regression cases. The full baseline remains
+**114/120 (95%)**; the original 90 other-skill runs are not combined with the
+30 post-fix runs. This does not establish held-out accuracy or improvement over
+an agent without skills.
+
+At the contract-fix commit, the complete offline suite passed **176 tests** on
+Python 3.10/3.12 CI, with one live integration test deselected. Historical test
+counts belong to their recorded versions. The portfolio scope is complete:
+four independent skills, validation tools, offline CI, and documented real-model
+evaluation. Broader benchmarks, additional models, and no-skill comparisons are
+optional future work.
+
 ## Configuring a provider or model
 
 Copy and edit [`examples/hermes-config.example.yaml`](examples/hermes-config.example.yaml) in your local Hermes configuration directory:
@@ -146,9 +200,9 @@ GitHub Actions installs the package on Python 3.10 and 3.12, runs the offline de
 - Python subprocess execution is not a hostile-code sandbox.
 - The static reviewer intentionally implements a small rule set and may miss defects outside it.
 - The range-boundary rule needs explicit all-items intent; it does not flag adjacent-pair algorithms.
-- Five controlled tasks were exercised through one Hermes/provider/model combination, but retry quality, token cost, broad task behavior, and other configurations remain unmeasured.
+- Recorded live evidence covers five smoke cases, a 40-task public synthetic baseline, and the same 10 Bug Hunter regression tasks after the fix. First-candidate success, internal retry counts, token cost, broad task behavior, and other configurations remain unmeasured.
 - Manual inspection of sanitized session traces confirmed terminal calls in the five smoke runs. The verifier's `designated_tool_call_proven` field remains false because final results alone cannot automatically prove which tool was called.
-- A future evaluation should use a redistributable labeled dataset and report precision/recall separately from determinism.
+- Held-out evaluation and a fair no-skill comparison would be separate future studies; current binary verdict metrics and regression results do not establish general model accuracy.
 
 ## Provenance and historical result
 

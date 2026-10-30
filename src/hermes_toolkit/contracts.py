@@ -59,9 +59,11 @@ def _validate_locations(items: Any, field: str, *, max_line: int | None) -> list
         severity = _string(item.get("severity"), f"{field}[{index}].severity").lower()
         issue_type = _string(item.get("type"), f"{field}[{index}].type").lower()
         if severity not in SEVERITIES:
-            raise ContractError(f"{field}[{index}].severity is not supported")
+            allowed = ", ".join(sorted(SEVERITIES))
+            raise ContractError(f"{field}[{index}].severity is not supported; allowed: {allowed}")
         if issue_type not in BUG_TYPES:
-            raise ContractError(f"{field}[{index}].type is not supported")
+            allowed = ", ".join(sorted(BUG_TYPES))
+            raise ContractError(f"{field}[{index}].type is not supported; allowed: {allowed}")
         normalized_item = dict(item)
         normalized_item.update(
             line_start=start,

@@ -56,6 +56,38 @@ def test_bug_location_must_be_in_source():
         })
 
 
+@pytest.mark.parametrize("bad_type", ["crash", "logic", "mutation", "runtime_error", "side_effect"])
+def test_unsupported_bug_type_lists_allowed_values_without_coercion(bad_type):
+    with pytest.raises(ContractError) as error:
+        validate_result("bug-hunter", TASK, {
+            "task_id": "任務-1", "verdict": "buggy", "confidence": 0.8,
+            "bugs": [{
+                "line_start": 2, "line_end": 2, "severity": "high", "type": bad_type,
+                "description": "invalid enum remains invalid",
+            }],
+        })
+    assert str(error.value) == (
+        "result.bugs[0].type is not supported; allowed: "
+        "api_misuse, edge_case, logic_error, null_deref, off_by_one, "
+        "type_error, unhandled_input, unsafe_operation"
+    )
+
+
+@pytest.mark.parametrize("bad_severity", ["urgent", "warning"])
+def test_unsupported_bug_severity_lists_allowed_values_without_coercion(bad_severity):
+    with pytest.raises(ContractError) as error:
+        validate_result("bug-hunter", TASK, {
+            "task_id": "任務-1", "verdict": "buggy", "confidence": 0.8,
+            "bugs": [{
+                "line_start": 2, "line_end": 2, "severity": bad_severity,
+                "type": "logic_error", "description": "invalid enum remains invalid",
+            }],
+        })
+    assert str(error.value) == (
+        "result.bugs[0].severity is not supported; allowed: critical, high, info, low, medium"
+    )
+
+
 def test_missing_required_field_rejected():
     with pytest.raises(ContractError, match="sql"):
         validate_result("text2sql", TASK, {
