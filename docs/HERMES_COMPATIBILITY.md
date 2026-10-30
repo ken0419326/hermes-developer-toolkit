@@ -1,7 +1,7 @@
 # Hermes CLI and skill compatibility
 
-This document records both interface checks and one narrowly scoped live-model
-compatibility observation. It is not a general model evaluation.
+This document records interface checks and scoped live-workflow observations.
+It is not a general model evaluation or backend identity attestation.
 
 ## Locally inspected version
 
@@ -47,12 +47,26 @@ records `designated_tool_call_proven: false`, because a successful final result
 does not itself prove which tool produced it. This manual trace observation is
 not automated attestation.
 
+The same Hermes version and requested model/provider label were subsequently
+used for the 120-run public synthetic baseline at commit `1414714` and the
+separate 30-run Bug Hunter regression at contract-fix commit `8e6cb0a`. The
+recorded results were 114/120 and 30/30 respectively. These are different scopes
+and versions; they are not combined into a new full-suite score. Details and
+evidence provenance are in [EVALUATION.md](EVALUATION.md).
+
+One regression launch was blocked before any task invocation because the
+evaluator's 10-second `hermes --version` preflight exceeded its timeout during
+an update check. Once the update cache existed, the same settings completed all
+30 planned invocations without a resume. Preflight can therefore depend on the installed
+Hermes update-check behavior; it is not a measured task failure or a guarantee
+about other installations.
+
 The following remain unverified:
 
 - task-file and terminal behavior in other Hermes backends, container modes, releases, providers, or models;
 - arbitrary quoting, newline, and shell-special-character reliability when a model chooses `printf` rather than the documented file-safe pattern;
 - provider-specific retry quality, token cost, and broad latency behavior;
-- accuracy, generalization, or production reliability beyond the five controlled cases;
+- generalization beyond the recorded public synthetic tasks, no-skill comparative benefit, or production reliability;
 - orchestration of the four independent skills into an automated generate-review-repair chain.
 
 Mocked subprocess tests remain offline results and are not reported as live
