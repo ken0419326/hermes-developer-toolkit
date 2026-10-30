@@ -50,6 +50,61 @@ not public artifacts. The sanitized files omit private paths, session IDs, and
 raw conversation content. This baseline is distinct from the offline suite and
 the earlier five-case smoke run.
 
+## Recorded post-fix Bug Hunter regression
+
+After diagnosing the six original failures, commit
+`8e6cb0aae4ed6591df9c3a281ae26f841eec27bd` clarified the required location fields,
+documented supported enums, and made validator errors list allowed values.
+Validation remains strict, with no conversion of unsupported values. The
+maintainer reported a separate real-Hermes run on the **same 10 Bug Hunter tasks
+with three repeats each**, using the same requested model/provider label, seed
+42, and 180-second timeout.
+
+| Metric | Original Bug Hunter baseline | Post-fix same regression set |
+| --- | ---: | ---: |
+| Passed / recorded | 24/30 | 30/30 |
+| Known-buggy correct validated reports | 9/15 | 15/15 |
+| Known-clean passes | 15/15 | 15/15 |
+| Invalid results / ungraded runs | 6 | 0 |
+| Tasks passing all three repeats | 7/10 | 10/10 |
+| Unrun invocations | 0 | 0 |
+| Recorded-duration sum | 802.039 s | 584.590 s |
+| Median / p95 recorded duration | 21.419 / 56.994 s | 18.032 / 27.377 s |
+
+The post-fix verdict counts were TP=15, FP=0, FN=0, TN=15, with no ungraded
+runs. All three rounds were 10/10. There were no resume launches or replacement
+runs. The first launch was blocked **before any task invocation or checkpoint**:
+`hermes --version` exceeded the evaluator's 10-second preflight timeout during an
+update check. After the update cache existed, the same settings completed the
+30 planned invocations. This preflight incident is recorded separately from
+task execution and is a known compatibility limit.
+
+See the [sanitized post-fix summary](../artifacts/bug-hunter-regression-2026-10-30.json).
+Its SHA-256 is `4093c68ea8659c76cb586fcdef308c81281d497e462992b1372a9e29223cd503`.
+Its source is the maintainer's local execution report also recorded in PR #2;
+it is a summary, not a public checkpoint with all model outputs. The preserved,
+ignored raw checkpoint and summary hashes are recorded there. Publishing the
+summary does not independently reproduce or regrade the local raw outputs.
+
+This result demonstrates observed improvement on known regression tasks, not
+held-out generalization. Guidance and validator feedback changed together, so
+the run does not isolate their individual effects or compare against a no-skill
+agent. **The complete baseline remains 114/120 (95%)**. No new full 120-run
+evaluation is claimed, and the original 90 other-skill runs are not combined
+with these 30 post-fix runs. The current offline suite has 176 passing tests;
+the baseline's historical 168-test result still belongs to its original commit.
+
+To repeat only this scope from a clean committed checkout, choose a fresh output
+file; do not overwrite the historical baseline:
+
+```sh
+python scripts/evaluate.py --dry-run --skill bug-hunter --repeats 3
+python scripts/evaluate.py --live --model gpt-6-luna \
+  --provider-label openai-codex --skill bug-hunter --repeats 3 --seed 42 \
+  --timeout 180 --max-invocations 30 --max-wall-seconds 1800 \
+  --output outputs/evaluation/bug-hunter-new-regression.json
+```
+
 ## What is measured
 
 | Skill | Tasks | Independent answer checks |
