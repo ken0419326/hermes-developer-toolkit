@@ -22,3 +22,17 @@ def test_candidate_skill_uses_file_transport(skill):
     assert "HERMES_TOOLKIT_CANDIDATE_PATH" in text
     assert "--candidate" in text
     assert "<<'HERMES_CANDIDATE_JSON'" in text
+
+
+def test_bug_hunter_documents_complete_candidate_contract():
+    text = (ROOT / "skills" / "bug-hunter" / "SKILL.md").read_text(encoding="utf-8")
+    for field in ("line_start", "line_end", "severity", "type", "description", "verdict", "bugs", "confidence"):
+        assert f'"{field}"' in text or f'`{field}`' in text
+    for value in (
+        "api_misuse", "edge_case", "logic_error", "null_deref", "off_by_one",
+        "type_error", "unhandled_input", "unsafe_operation",
+        "critical", "high", "medium", "low", "info",
+    ):
+        assert f"`{value}`" in text
+    assert "`line` is not a valid substitute" in text
+    assert "Do not\n   stop after fixing only the first reported error" in text
